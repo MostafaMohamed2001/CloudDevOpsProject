@@ -1,0 +1,21 @@
+acl_ingress = {
+  http = {
+    to_port   = 80
+    from_port = 80
+  }
+
+  ssh = {
+    to_port   = 22
+    from_port = 22
+  }
+
+  https = {
+    to_port   = 443
+    from_port = 442
+  }
+
+  nodejs = {
+    to_port   = 3000
+    from_port = 3000
+  }
+}

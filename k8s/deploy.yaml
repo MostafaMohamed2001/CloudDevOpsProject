@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: ivo
+
+spec
+  replicas:
+
+
+  template:
+    container:
+      - name:
+        image:
+        port:
