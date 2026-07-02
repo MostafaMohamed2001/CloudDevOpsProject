@@ -1,7 +1,8 @@
 
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
-
+  enable_dns_support   = true
+  enable_dns_hostnames = true
   tags = {
     Name = "main-vpc"
   }
@@ -25,6 +26,8 @@ resource "aws_subnet" "public" {
 
   tags = {
     Name = each.key
+     "kubernetes.io/role/elb"         = "1"
+  "kubernetes.io/cluster/main-cluster" = "shared"
   }
 }
 
@@ -82,6 +85,9 @@ resource "aws_subnet" "private" {
 
   tags = {
     Name = each.key
+    
+  "kubernetes.io/role/internal-elb" = "1"
+  "kubernetes.io/cluster/main-cluster" = "shared"
   }
 }
 

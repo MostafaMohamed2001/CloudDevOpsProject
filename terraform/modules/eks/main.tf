@@ -34,7 +34,13 @@ resource "aws_eks_cluster" "main" {
 
  vpc_config {
   subnet_ids = values(var.private_subnet_ids)
+
+  endpoint_private_access = true
+  endpoint_public_access  = true
 }
+  access_config {
+    authentication_mode = "API_AND_CONFIG_MAP"
+  }
 
   depends_on = [aws_iam_role_policy_attachment.cluster]
 }
@@ -82,7 +88,7 @@ resource "aws_eks_node_group" "main" {
   node_group_name = "node-group"
   node_role_arn   = aws_iam_role.eks_nodes.arn
   subnet_ids = values(var.private_subnet_ids)
-  instance_types  = ["t3.medium"]
+  instance_types  = ["t3.small"]
 
 scaling_config {
   desired_size = 2
@@ -103,4 +109,9 @@ scaling_config {
   tags = {
     Name = "eks-node-group"
   }
+}
+resource "aws_eks_access_entry" "nodes" {
+  cluster_name  = aws_eks_cluster.main.name
+  principal_arn = aws_iam_role.eks_nodes.arn
+  type          = "EC2_LINUX"
 }
