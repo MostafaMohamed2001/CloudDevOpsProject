@@ -10,7 +10,7 @@ module "network" {
 
   public_subnets  = var.public_subnets
   private_subnets = var.private_subnets
-  
+
   acl_ingress =var.acl_ingress
   acl_egress  = var.acl_egress
 
@@ -29,4 +29,16 @@ module "server" {
   instance_type   = var.instance_type
 
   subnet_id = module.network.public_subnet_ids["public_1"]
+}
+module "eks" {
+  source = "./modules/eks"
+
+  private_subnet_ids = module.network.private_subnet_ids
+}
+
+
+module "ecr" {
+  source = "./modules/ecr"
+
+  repository_name = var.repository_name
 }

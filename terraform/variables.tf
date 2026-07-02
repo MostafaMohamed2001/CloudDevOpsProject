@@ -74,3 +74,11 @@ variable "acl_egress" {
     to_port     = number
   }))
 }
+
+
+
+
+
+variable "repository_name" {
+  type = string
+}
