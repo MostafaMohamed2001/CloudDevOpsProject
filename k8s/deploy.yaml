@@ -1,16 +1,37 @@
-apiVersion: v1
-kind: Service
+apiVersion: apps/v1
+kind: Deployment
 
 metadata:
-  name: python-service
+  name: python-app
   namespace: ivolve
 
 spec:
+  replicas: 2
+
   selector:
-    app: python
+    matchLabels:
+      app: python
 
-  ports:
-    - port: 80
-      targetPort: 3500
+  template:
+    metadata:
+      labels:
+        app: python
 
-  type: ClusterIP
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - python
+              topologyKey: kubernetes.io/hostname
+
+      containers:
+        - name: python
+          image: 114522856449.dkr.ecr.eu-central-1.amazonaws.com/cloud-devops-app:1.0.0
+
+          ports:
+            - containerPort: 3500
