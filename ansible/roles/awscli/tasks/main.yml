@@ -1,4 +1,33 @@
-- name: Install AWS CLI
+---
+- name: Install dependencies
   ansible.builtin.apt:
-    name: awscli
+    name:
+      - unzip
+      - curl
     state: present
+    update_cache: yes
+
+- name: Download AWS CLI v2
+  ansible.builtin.get_url:
+    url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+    dest: /tmp/awscliv2.zip
+
+- name: Extract AWS CLI
+  ansible.builtin.unarchive:
+    src: /tmp/awscliv2.zip
+    dest: /tmp
+    remote_src: yes
+
+- name: Install AWS CLI
+  ansible.builtin.command:
+    cmd: /tmp/aws/install --update
+
+- name: Verify AWS CLI
+  ansible.builtin.command:
+    cmd: aws --version
+  register: awscli_version
+  changed_when: false
+
+- name: Show AWS CLI version
+  ansible.builtin.debug:
+    var: awscli_version.stdout
