@@ -1,0 +1,11 @@
+---
+- name: Configure Jenkins Server
+  hosts: _jenkins_server
+  become: yes
+
+  roles:
+    - java
+    - docker
+    - jenkins
+    - awscli
+    - trivy

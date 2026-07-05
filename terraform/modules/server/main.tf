@@ -47,6 +47,14 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 }
+
+resource "aws_eip" "jenkins" {
+  domain = "vpc"
+
+  tags = {
+    Name = "jenkins-eip"
+  }
+}
 resource "aws_key_pair" "main" {
   key_name   = var.key_name
   public_key = file(var.public_key_path) 
@@ -65,3 +73,9 @@ resource "aws_instance" "main" {
   }
 }
 
+
+
+resource "aws_eip_association" "jenkins" {
+  allocation_id = aws_eip.jenkins.id
+  instance_id   = aws_instance.main.id
+}

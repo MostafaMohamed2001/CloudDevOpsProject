@@ -1,0 +1,57 @@
+---
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - ca-certificates
+      - gnupg
+    state: present
+    update_cache: yes
+
+- name: Create keyrings directory
+  ansible.builtin.file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Remove old Jenkins repository
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/jenkins.sources
+    state: absent
+
+- name: Remove old Jenkins key
+  ansible.builtin.file:
+    path: /usr/share/keyrings/jenkins-keyring.asc
+    state: absent
+
+- name: Download Jenkins 2026 signing key
+  ansible.builtin.get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+    mode: "0644"
+
+- name: Add Jenkins repository
+  ansible.builtin.deb822_repository:
+    name: jenkins
+    types: deb
+    uris: https://pkg.jenkins.io/debian-stable
+    suites: binary/
+    components: []
+    signed_by: /usr/share/keyrings/jenkins-keyring.asc
+    enabled: true
+    state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Jenkins
+  ansible.builtin.apt:
+    name: jenkins
+    state: present
+
+- name: Enable and start Jenkins
+  ansible.builtin.service:
+    name: jenkins
+    enabled: true
+    state: started
