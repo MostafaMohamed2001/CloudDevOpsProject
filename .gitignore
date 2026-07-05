@@ -7,5 +7,3 @@
 *.tfstate.*
 *.tfvars
 
-# Ignore this directory
-FinalProject/
